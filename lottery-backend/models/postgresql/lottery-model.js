@@ -11,10 +11,11 @@ const DEFAULT_CONFIG = {
 }
 
 export class LotteryModel {
-  static getPool() {
+  static getPool () {
     return new Pool(DEFAULT_CONFIG)
   }
-  static async getBoards() {
+
+  static async getBoards () {
     const pool = this.getPool()
 
     try {
@@ -31,7 +32,7 @@ export class LotteryModel {
     }
   }
 
-  static async getDeck() {
+  static async getDeck () {
     const pool = this.getPool()
 
     try {
