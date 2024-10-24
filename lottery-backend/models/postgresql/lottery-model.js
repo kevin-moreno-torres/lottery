@@ -20,7 +20,7 @@ export class LotteryModel {
 
     try {
       const connection = await pool.connect()
-      const res = await connection.query('SELECT * FROM Board')
+      const res = await connection.query('SELECT * FROM Board WHERE active = true')
 
       connection.release()
 
