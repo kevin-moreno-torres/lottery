@@ -4,14 +4,20 @@ export class LotteryController {
   }
 
   getBoards = async (req, res) => {
-    const boards = await this.lotteryModel.getBoards()
+    const { user } = req.session
 
-    res.json(boards)
+    if (!user) return res.status(403).send('Unauthorized')
+
+    const boards = await this.lotteryModel.getBoards()
+    res.send(boards)
   }
 
   getDeck = async (req, res) => {
-    const deck = await this.lotteryModel.getDeck()
+    const { user } = req.session
 
-    res.json(deck)
+    if (!user) return res.status(403).send('Unauthorized')
+
+    const deck = await this.lotteryModel.getDeck()
+    res.send(deck)
   }
 }
