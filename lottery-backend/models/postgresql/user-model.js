@@ -34,22 +34,22 @@ export class UserModel {
     }
   }
 
-  static async postUserLogout (email) {
+  static async patchUserLogin (email) {
     const pool = this.getPool()
 
     try {
       const connection = await pool.connect()
       const query =
-        'SELECT id, password, user_name, name, last_name, email FROM users WHERE email = $1 AND active = true AND locked = false;'
+        'UPDATE users SET last_login = NOW() WHERE email = $1 AND active = true AND locked = false;'
       const res = await connection.query(query, [email])
 
       connection.release()
 
       const userFound = res.rows.length > 0
 
-      return { logoutUser: userFound }
+      return { updateUser: userFound }
     } catch (error) {
-      console.error('Post User Logout error:', error)
+      console.error('Patch User Login error:', error)
     } finally {
       await pool.end()
     }
