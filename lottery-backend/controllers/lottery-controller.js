@@ -1,5 +1,5 @@
 export class LotteryController {
-  constructor({ lotteryModel }) {
+  constructor ({ lotteryModel }) {
     this.lotteryModel = lotteryModel
   }
 
