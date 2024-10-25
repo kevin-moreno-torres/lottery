@@ -54,7 +54,9 @@ export class UserController {
     const { email } = req.body
     const validation = userLogoutSchema.safeParse({ email })
     if (validation.success) {
-      res.send('Success', 'User logged out successfully')
+      res
+        .clearCookie('access-token')
+        .send({ success: 'User logged out successfully' })
     } else {
       res.status(400).send({
         error: 'Error, please try again.'
