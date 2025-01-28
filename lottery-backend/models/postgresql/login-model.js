@@ -10,12 +10,12 @@ const DEFAULT_CONFIG = {
   ssl: true
 }
 
-export class UserModel {
+export class LoginModel {
   static getPool () {
     return new Pool(DEFAULT_CONFIG)
   }
 
-  static async postUserLogin (email) {
+  static async postLogin (email) {
     const pool = this.getPool()
 
     try {
@@ -28,13 +28,13 @@ export class UserModel {
 
       return res.rows.length > 0 ? res.rows[0] : []
     } catch (error) {
-      console.error('Post User Login error:', error)
+      console.error('Post Login error:', error)
     } finally {
       await pool.end()
     }
   }
 
-  static async patchUserLogin (email) {
+  static async patchLogin (email) {
     const pool = this.getPool()
 
     try {
@@ -49,7 +49,7 @@ export class UserModel {
 
       return { updateUser: userFound }
     } catch (error) {
-      console.error('Patch User Login error:', error)
+      console.error('Patch Login error:', error)
     } finally {
       await pool.end()
     }

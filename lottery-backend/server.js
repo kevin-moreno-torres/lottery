@@ -1,14 +1,18 @@
 import express from 'express'
 import 'dotenv/config'
 import { createLotteryRouter } from './routes/lottery-routes.js'
-import { createUserRouter } from './routes/user-routes.js'
+import { createLoginRouter } from './routes/login-routes.js'
 import { LotteryModel } from './models/postgresql/lottery-model.js'
-import { UserModel } from './models/postgresql/user-model.js'
+import { LoginModel } from './models/postgresql/login-model.js'
 import cookieParser from 'cookie-parser'
 import jwt from 'jsonwebtoken'
+import cors from 'cors'
 
 const app = express()
 app.use(express.json())
+
+const originHost = process.env.NODE_ENV === 'production' ? process.env.PRODUCTION_HOST : process.env.DEV_HOST
+app.use(cors({ origin: originHost, credentials: true, exposedHeaders: ['Set-Cookie'] }))
 app.use(cookieParser())
 
 app.use((req, res, next) => {
@@ -25,13 +29,27 @@ app.use((req, res, next) => {
 
 app.disable('x-powered-by')
 
-app.get('/', (req, res) => {
-  res.send('Backend')
+const userValidationToken = async (req, res, next) => {
+  const token = req.cookies['access-token']
+
+  if (token) {
+    try {
+      next()
+    } catch (error) {
+      res.status(401).send({ error: 'Invalid token, please login again.' })
+    }
+  } else {
+    res.status(401).send({ error: 'Unauthorized, please login.' })
+  }
+}
+
+app.get('/validationToken', userValidationToken, (req, res) => {
+  res.send({ validated: true })
 })
 
-app.use('/lottery', createLotteryRouter({ lotteryModel: LotteryModel }))
+app.use('/lottery', userValidationToken, createLotteryRouter({ lotteryModel: LotteryModel }))
 
-app.use('/user', createUserRouter({ userModel: UserModel }))
+app.use('/authentication', createLoginRouter({ loginModel: LoginModel }))
 
 const PORT = process.env.PORT ?? 3000
 
